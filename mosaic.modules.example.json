@@ -1,0 +1,31 @@
+{
+  "modules": [
+    {
+      "id": "task-tracker",
+      "name": "Task Tracker",
+      "icon": "📋",
+      "remoteEntry": "https://aiserver.weasel-armadillo.ts.net:5175/remoteEntry.js",
+      "component": "task-tracker/TaskApp",
+      "color": "#58a6ff",
+      "enabled": true
+    },
+    {
+      "id": "config-service",
+      "name": "Config Service",
+      "icon": "⚙️",
+      "remoteEntry": "https://aiserver.weasel-armadillo.ts.net:5196/remoteEntry.js",
+      "component": "config-service/ConfigApp",
+      "color": "#e3b341",
+      "enabled": true
+    },
+    {
+      "id": "auth-service",
+      "name": "Auth Service",
+      "icon": "🔐",
+      "remoteEntry": "https://aiserver.weasel-armadillo.ts.net:5191/remoteEntry.js",
+      "component": "auth-service/AuthApp",
+      "color": "#f85149",
+      "enabled": true
+    }
+  ]
+}

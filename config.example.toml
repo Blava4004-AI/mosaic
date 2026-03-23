@@ -1,0 +1,16 @@
+# Mosaic — Configuration
+# Copy to config.toml
+
+[api]
+port = 5180
+
+[api.ssl]
+key_path = ""
+cert_path = ""
+
+[frontend]
+# Auth Service URL (accessible from browser)
+auth_service_url = "https://aiserver.weasel-armadillo.ts.net:5190"
+# Config Service URL
+config_service_url = "http://localhost:5195"
+app_title = "Mosaic"

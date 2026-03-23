@@ -1,0 +1,5 @@
+{
+  "authServiceUrl": "https://aiserver.weasel-armadillo.ts.net:5190",
+  "configServiceUrl": "http://localhost:5195",
+  "appTitle": "Mosaic"
+}

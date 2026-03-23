@@ -1,0 +1,6 @@
+node_modules
+dist
+config.toml
+public/config.json
+mosaic.modules.json
+*.log
