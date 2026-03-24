@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from './hooks/useAuth'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 export default function Login() {
   const { login } = useAuth()
@@ -76,6 +76,12 @@ export default function Login() {
         }}>
           {submitting ? 'Signing in...' : 'Sign in'}
         </button>
+
+        <div style={styles.links}>
+          <Link to="/register" style={styles.link}>Create an account</Link>
+          <span style={styles.linkDivider}>•</span>
+          <Link to="/forgot-password" style={styles.link}>Forgot password?</Link>
+        </div>
 
         <p style={styles.footer}>
           Powered by homelab Auth Service
@@ -157,6 +163,21 @@ const styles = {
     padding: '8px 12px',
     marginBottom: '1rem',
     fontSize: '0.85rem',
+  },
+  links: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '8px',
+    marginTop: '1rem',
+    fontSize: '0.85rem',
+  },
+  link: {
+    color: 'var(--accent)',
+    textDecoration: 'none',
+  },
+  linkDivider: {
+    color: 'var(--text-muted)',
   },
   footer: {
     marginTop: '1.5rem',
