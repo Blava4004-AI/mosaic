@@ -36,7 +36,13 @@ export default defineConfig({
   ],
   server: {
     port: 5180,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    allowedHosts: ['aiserver.weasel-armadillo.ts.net']
+  },
+  preview: {
+    port: 5180,
+    host: '0.0.0.0',
+    allowedHosts: ['aiserver.weasel-armadillo.ts.net']
   },
   build: {
     target: 'esnext',

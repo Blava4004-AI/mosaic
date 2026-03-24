@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+
+const PERMISSION_LEVELS = { none: 0, read: 1, write: 2, admin: 3 }
+
+const PERM_BADGE_COLORS = {
+  admin: { bg: 'rgba(16,185,129,0.15)', color: '#10b981' },
+  write: { bg: 'rgba(99,102,241,0.15)', color: '#6366f1' },
+  read: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b' },
+  none: { bg: 'rgba(239,68,68,0.15)', color: '#ef4444' },
+}
 
 function SetupMessage() {
   return (
@@ -37,8 +47,11 @@ function SetupMessage() {
   )
 }
 
-function ModuleCard({ module, onClick }) {
+function ModuleCard({ module, onClick, userPermission }) {
   const [status, setStatus] = useState('checking')
+  const minRequired = module.minPermission || 'read'
+  const hasAccess = (PERMISSION_LEVELS[userPermission] || 0) >= (PERMISSION_LEVELS[minRequired] || 0)
+  const badgeStyle = PERM_BADGE_COLORS[userPermission] || PERM_BADGE_COLORS.none
 
   useEffect(() => {
     const controller = new AbortController()
@@ -58,16 +71,29 @@ function ModuleCard({ module, onClick }) {
       display: 'flex',
       flexDirection: 'column',
       gap: '0.75rem',
-      transition: 'background 0.15s',
-      cursor: 'pointer',
+      transition: 'background 0.15s, opacity 0.15s',
+      cursor: hasAccess ? 'pointer' : 'default',
+      opacity: hasAccess ? 1 : 0.5,
     }}
-      onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+      onMouseEnter={e => { if (hasAccess) e.currentTarget.style.background = 'var(--bg-hover)' }}
       onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-card)'}
-      onClick={onClick}
+      onClick={hasAccess ? onClick : undefined}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <span style={{ fontSize: '1.5rem' }}>{module.icon}</span>
         <span style={{ fontWeight: 600, fontSize: '1rem' }}>{module.name}</span>
+        <span style={{
+          display: 'inline-block',
+          padding: '2px 8px',
+          borderRadius: '4px',
+          fontSize: '0.7rem',
+          fontWeight: 600,
+          background: badgeStyle.bg,
+          color: badgeStyle.color,
+          marginLeft: 'auto',
+        }}>
+          {userPermission}
+        </span>
       </div>
 
       <div style={{
@@ -93,18 +119,22 @@ function ModuleCard({ module, onClick }) {
           {status === 'checking' ? 'Checking...' : status === 'online' ? 'Online' : 'Offline'}
         </span>
 
-        <button style={{
-          background: module.color || 'var(--accent)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 'var(--radius)',
-          padding: '6px 16px',
-          fontSize: '0.8rem',
-          fontWeight: 600,
-          cursor: 'pointer',
-        }}>
-          Open
-        </button>
+        {hasAccess ? (
+          <button style={{
+            background: module.color || 'var(--accent)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 'var(--radius)',
+            padding: '6px 16px',
+            fontSize: '0.8rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+          }}>
+            Open
+          </button>
+        ) : (
+          <span style={{ fontSize: '0.75rem', color: 'var(--danger, #ef4444)' }}>🔒 No Access</span>
+        )}
       </div>
     </div>
   )
@@ -112,6 +142,7 @@ function ModuleCard({ module, onClick }) {
 
 export default function Dashboard({ modules, noConfig, loading }) {
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   if (loading) {
     return (
@@ -133,13 +164,17 @@ export default function Dashboard({ modules, noConfig, loading }) {
         gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
         gap: '1rem',
       }}>
-        {modules.map(mod => (
-          <ModuleCard
-            key={mod.id}
-            module={mod}
-            onClick={() => navigate(`/module/${mod.id}`)}
-          />
-        ))}
+        {modules.map(mod => {
+          const userPermission = user?.permissions?.[mod.id] || user?.permissions?.['__default__'] || 'none'
+          return (
+            <ModuleCard
+              key={mod.id}
+              module={mod}
+              userPermission={userPermission}
+              onClick={() => navigate(`/module/${mod.id}`)}
+            />
+          )
+        })}
       </div>
     </div>
   )
